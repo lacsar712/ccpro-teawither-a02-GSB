@@ -295,3 +295,15 @@ table.data tr:hover td {
   text-align: center;
   color: var(--muted);
 }
+
+a.stat.stat-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+
+a.stat.stat-link:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+  transform: translateY(-1px);
+}

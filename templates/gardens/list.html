@@ -4,8 +4,12 @@
 <div class="page-header">
   <h1>茶园</h1>
   <div class="actions">
+    <a class="btn btn-secondary btn-sm {% if valid_filter %}active-filter{% endif %}"
+       href="{% url 'garden_list' %}{% if not valid_filter %}?valid=1{% endif %}">
+      {% if valid_filter %}查看全部茶园{% else %}仅看有效标定园{% endif %}
+    </a>
     <button class="btn btn-secondary btn-sm"
-            hx-get="{% url 'garden_list' %}"
+            hx-get="{% url 'garden_list' %}{% if valid_filter %}?valid=1{% endif %}"
             hx-target="#garden-table"
             hx-swap="innerHTML">刷新列表</button>
     <a class="btn" href="{% url 'garden_create' %}">新建茶园</a>

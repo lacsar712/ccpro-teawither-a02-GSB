@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}作废风道标定票{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>作废风道标定票</h1>
+</div>
+<div class="card">
+  <p>确认作废标定票「{{ object.ticket_label }}」？作废后该园可能失去有效标定，槽位将不得由装叶中改为萎凋中。</p>
+  <form method="post" class="actions">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">确认作废</button>
+    <a class="btn btn-secondary" href="{% url 'calibration_list' %}">取消</a>
+  </form>
+</div>
+{% endblock %}

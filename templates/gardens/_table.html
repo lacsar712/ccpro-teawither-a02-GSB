@@ -4,24 +4,34 @@
     <tr>
       <th>名称</th>
       <th>海拔带</th>
+      <th>风道标定</th>
       <th>备注</th>
       <th>操作</th>
     </tr>
   </thead>
   <tbody>
     {% for g in gardens %}
+    {% with ticket=g.valid_calibration %}
     <tr>
       <td>{{ g.name }}</td>
       <td>{{ g.altitudeBand }}</td>
+      <td>
+        {% if ticket %}
+        <span class="badge badge-ready">有效 · {{ ticket.calibrationDate|date:"Y-m-d" }} 通过</span>
+        {% else %}
+        <span class="badge badge-loading">无有效标定</span>
+        {% endif %}
+      </td>
       <td>{{ g.notes|default:"—" }}</td>
       <td class="actions">
         <a class="btn btn-sm btn-secondary" href="{% url 'garden_edit' g.pk %}">编辑</a>
         <a class="btn btn-sm btn-danger" href="{% url 'garden_delete' g.pk %}">删除</a>
       </td>
     </tr>
+    {% endwith %}
     {% endfor %}
   </tbody>
 </table>
 {% else %}
-<p class="empty">暂无茶园，请先新建。</p>
+<p class="empty">{% if valid_filter %}没有持有有效风道标定的茶园。{% else %}暂无茶园，请先新建。{% endif %}</p>
 {% endif %}

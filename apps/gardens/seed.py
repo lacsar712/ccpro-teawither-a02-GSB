@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from .models import Garden, Trough, WitherBatch
+from .models import AirDuctCalibration, Garden, Trough, WitherBatch
 
 
 def ensure_seed_data():
@@ -11,7 +11,9 @@ def ensure_seed_data():
     User = get_user_model()
 
     if not User.objects.filter(username="admin").exists():
-        User.objects.create_superuser("admin", "admin@teawither.local", "123456")
+        admin = User.objects.create_superuser("admin", "admin@teawither.local", "123456")
+    else:
+        admin = User.objects.get(username="admin")
 
     if not User.objects.filter(username="witherer").exists():
         User.objects.create_user("witherer", "witherer@teawither.local", "123456")
@@ -92,3 +94,13 @@ def ensure_seed_data():
     )
     t4.status = Trough.STATUS_READY
     t4.save()
+
+    # 风道标定：一号园今日有一张通过票（有效）；二号园刻意不建票（无有效标定）。
+    AirDuctCalibration.objects.create(
+        garden=g1,
+        calibrationDate=timezone.localdate(),
+        windSpeed=Decimal("3.60"),
+        passed=True,
+        recordedBy=admin,
+    )
+

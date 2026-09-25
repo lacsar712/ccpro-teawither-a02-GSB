@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}风道标定{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>风道标定票</h1>
+  <div class="actions">
+    <form method="get" class="actions" style="gap:.4rem">
+      <select name="garden" class="input" style="width:auto" onchange="this.form.submit()">
+        <option value="">全部茶园</option>
+        {% for g in gardens %}
+        <option value="{{ g.pk }}" {% if selected_garden == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-secondary btn-sm"
+              hx-get="{% url 'calibration_list' %}{% if selected_garden %}?garden={{ selected_garden }}{% endif %}"
+              hx-target="#calibration-table"
+              hx-swap="innerHTML">刷新列表</button>
+    </form>
+    <a class="btn" href="{% url 'calibration_create' %}">新建标定票</a>
+  </div>
+</div>
+<div class="card" id="calibration-table">
+  {% include "calibrations/_table.html" %}
+</div>
+<p class="muted" style="margin-top:1rem">
+  规则：同园同一自然日仅允许一张票；未通过票不得当作有效。仅当最新一张为通过票且标定日不早于七个自然日前，该园槽位方可由装叶中改为萎凋中。作废票仅主管可执行。
+</p>
+{% endblock %}

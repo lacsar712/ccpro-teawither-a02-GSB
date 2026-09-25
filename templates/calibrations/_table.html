@@ -1,0 +1,42 @@
+{% if calibrations %}
+<table class="data">
+  <thead>
+    <tr>
+      <th>票号</th>
+      <th>所属茶园</th>
+      <th>标定日</th>
+      <th>风速读数</th>
+      <th>是否通过</th>
+      <th>记录人</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in calibrations %}
+    <tr>
+      <td>#{{ c.pk }}</td>
+      <td>{{ c.garden.name }}</td>
+      <td>{{ c.calibrationDate|date:"Y-m-d" }}</td>
+      <td>{{ c.windSpeed }}</td>
+      <td>
+        {% if c.passed %}
+        <span class="badge badge-ready">通过</span>
+        {% else %}
+        <span class="badge badge-loading">未通过</span>
+        {% endif %}
+      </td>
+      <td>{{ c.recordedBy.username }}</td>
+      <td class="actions">
+        {% if user.is_staff %}
+        <a class="btn btn-sm btn-danger" href="{% url 'calibration_delete' c.pk %}">作废</a>
+        {% else %}
+        <span class="muted">仅主管可作废</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">暂无风道标定票。</p>
+{% endif %}

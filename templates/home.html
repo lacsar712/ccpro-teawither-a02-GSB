@@ -8,9 +8,13 @@
   <div class="stat"><div class="num">{{ garden_count }}</div><div class="label">茶园</div></div>
   <div class="stat"><div class="num">{{ trough_count }}</div><div class="label">萎凋槽</div></div>
   <div class="stat"><div class="num">{{ batch_count }}</div><div class="label">萎凋批次</div></div>
+  <a class="stat stat-link" href="{% url 'garden_list' %}?valid=1"><div class="num">{{ valid_garden_count }}</div><div class="label">有效标定园数</div></a>
   <div class="stat"><div class="num">{{ loading_count }}</div><div class="label">装叶中</div></div>
   <div class="stat"><div class="num">{{ withering_count }}</div><div class="label">萎凋中</div></div>
   <div class="stat"><div class="num">{{ ready_count }}</div><div class="label">可下槽</div></div>
 </div>
-<p class="muted" style="margin-top:1.25rem">规则提示：槽位设为「可下槽」时，最新批次实测含水率须已填写且不超过 40%。</p>
+<p class="muted" style="margin-top:1.25rem">
+  规则提示：① 槽位由「装叶中」改为「萎凋中」时，所属茶园必须持有有效风道标定——最新一张标定票为通过票，且标定日不早于七个自然日前；未通过票或过期票均无效，缺有效标定将拒绝改态。② 同园同一自然日只允许一张标定票，风速读数必须为正数。③ 槽位设为「可下槽」时，最新批次实测含水率须已填写且不超过 40%。
+  「有效标定园数」与<a href="{% url 'garden_list' %}?valid=1">茶园列表的「仅看有效标定园」筛选</a>行数一致。
+</p>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Garden, Trough, WitherBatch
+from .models import AirDuctCalibration, Garden, Trough, WitherBatch
 
 
 class GardenForm(forms.ModelForm):
@@ -64,3 +64,39 @@ class WitherBatchForm(forms.ModelForm):
 
             local = timezone.localtime(self.instance.startedAt)
             self.initial["startedAt"] = local.strftime("%Y-%m-%dT%H:%M")
+
+
+class AirDuctCalibrationForm(forms.ModelForm):
+    class Meta:
+        model = AirDuctCalibration
+        fields = ["garden", "calibrationDate", "windSpeed", "passed"]
+        widgets = {
+            "garden": forms.Select(attrs={"class": "input"}),
+            "calibrationDate": forms.DateInput(
+                attrs={"class": "input", "type": "date"}
+            ),
+            "windSpeed": forms.NumberInput(
+                attrs={"class": "input", "step": "0.01", "min": "0"}
+            ),
+            "passed": forms.CheckboxInput(),
+        }
+
+    def clean_windSpeed(self):
+        value = self.cleaned_data.get("windSpeed")
+        if value is not None and value <= 0:
+            raise forms.ValidationError("风速读数必须为正数。")
+        return value
+
+    def clean(self):
+        cleaned_data = super().clean()
+        garden = cleaned_data.get("garden")
+        calibration_date = cleaned_data.get("calibrationDate")
+        if garden and calibration_date:
+            duplicate = AirDuctCalibration.objects.filter(
+                garden=garden, calibrationDate=calibration_date
+            ).first()
+            if duplicate and duplicate.pk != (self.instance.pk if self.instance else None):
+                raise forms.ValidationError(
+                    f"该园此自然日已有标定票：{duplicate.ticket_label()}，不得重复建票。"
+                )
+        return cleaned_data
