@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Garden, Trough, WitherBatch
+from .models import AirDuctCalibration, Garden, Trough, WitherBatch
 
 
 @admin.register(Garden)
@@ -27,3 +27,18 @@ class WitherBatchAdmin(admin.ModelAdmin):
         "rollGrade",
     )
     list_filter = ("rollGrade",)
+
+
+@admin.register(AirDuctCalibration)
+class AirDuctCalibrationAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "garden",
+        "calibrationDate",
+        "windSpeed",
+        "passed",
+        "recorder",
+        "isVoided",
+    )
+    list_filter = ("passed", "isVoided", "garden")
+    search_fields = ("garden__name", "recorder__username")

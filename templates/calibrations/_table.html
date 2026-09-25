@@ -1,0 +1,55 @@
+{% if tickets %}
+<table class="data">
+  <thead>
+    <tr>
+      <th>票号</th>
+      <th>所属茶园</th>
+      <th>标定日</th>
+      <th>风速读数(m/s)</th>
+      <th>是否通过</th>
+      <th>记录人</th>
+      <th>状态</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in tickets %}
+    <tr>
+      <td>#{{ t.pk }}</td>
+      <td>{{ t.garden.name }}</td>
+      <td>{{ t.calibrationDate|date:"Y-m-d" }}</td>
+      <td>{{ t.windSpeed }}</td>
+      <td>
+        {% if t.passed %}
+        <span class="badge badge-withering">通过</span>
+        {% else %}
+        <span class="badge badge-danger">未通过</span>
+        {% endif %}
+      </td>
+      <td>{{ t.recorder.username }}</td>
+      <td>
+        {% if t.isVoided %}
+        <span class="badge badge-voided">已作废</span>
+        {% elif t.pk in valid_ids %}
+        <span class="badge badge-ready">有效</span>
+        {% else %}
+        <span class="badge badge-loading">无效</span>
+        {% endif %}
+      </td>
+      <td class="actions">
+        {% if request.user.is_superuser and not t.isVoided %}
+        <form method="post" action="{% url 'calibration_void' t.pk %}"
+              onsubmit="return confirm('确认作废标定票 #{{ t.pk }}？作废后不可恢复。');"
+              style="margin:0">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-danger" type="submit">作废</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">暂无风道标定票。</p>
+{% endif %}

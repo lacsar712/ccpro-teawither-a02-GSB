@@ -40,4 +40,19 @@ urlpatterns = [
         views.BatchDeleteView.as_view(),
         name="batch_delete",
     ),
+    path(
+        "calibrations/",
+        views.CalibrationListView.as_view(),
+        name="calibration_list",
+    ),
+    path(
+        "calibrations/new/",
+        views.CalibrationCreateView.as_view(),
+        name="calibration_create",
+    ),
+    path(
+        "calibrations/<int:pk>/void/",
+        views.CalibrationVoidView.as_view(),
+        name="calibration_void",
+    ),
 ]

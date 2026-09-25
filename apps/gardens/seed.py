@@ -3,11 +3,11 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from .models import Garden, Trough, WitherBatch
+from .models import AirDuctCalibration, Garden, Trough, WitherBatch
 
 
 def ensure_seed_data():
-    """Idempotent seed: users + sample gardens/troughs/batches."""
+    """Idempotent seed: users + sample gardens/troughs/batches/calibrations."""
     User = get_user_model()
 
     if not User.objects.filter(username="admin").exists():
@@ -18,6 +18,9 @@ def ensure_seed_data():
 
     if Garden.objects.exists():
         return
+
+    admin = User.objects.get(username="admin")
+    witherer = User.objects.get(username="witherer")
 
     g1 = Garden.objects.create(
         name="云雾岭一号园",
@@ -30,6 +33,24 @@ def ensure_seed_data():
         notes="背风缓坡",
     )
 
+    # 风道标定票：一号园有效（昨日通过）；二号园仅一张未通过票 → 无有效标定
+    today = timezone.localdate()
+    AirDuctCalibration.objects.create(
+        garden=g1,
+        calibrationDate=today - timezone.timedelta(days=1),
+        windSpeed=Decimal("2.40"),
+        passed=True,
+        recorder=witherer,
+    )
+    AirDuctCalibration.objects.create(
+        garden=g2,
+        calibrationDate=today - timezone.timedelta(days=2),
+        windSpeed=Decimal("0.60"),
+        passed=False,
+        recorder=admin,
+    )
+
+    # 一号园有有效标定，可直接以「萎凋中」建槽
     t1 = Trough.objects.create(
         garden=g1,
         troughCode="A-01",
@@ -44,13 +65,15 @@ def ensure_seed_data():
         loadKg=Decimal("95.00"),
         status=Trough.STATUS_LOADING,
     )
+    # 二号园无有效标定：历史在制槽位按规则上线前的状态直接落库
     t3 = Trough.objects.create(
         garden=g2,
         troughCode="B-01",
         cultivar="黄金芽",
         loadKg=Decimal("88.25"),
-        status=Trough.STATUS_WITHERING,
+        status=Trough.STATUS_LOADING,
     )
+    Trough.objects.filter(pk=t3.pk).update(status=Trough.STATUS_WITHERING)
 
     now = timezone.now()
     WitherBatch.objects.create(
@@ -81,7 +104,7 @@ def ensure_seed_data():
         troughCode="B-02",
         cultivar="龙井43",
         loadKg=Decimal("110.00"),
-        status=Trough.STATUS_WITHERING,
+        status=Trough.STATUS_LOADING,
     )
     WitherBatch.objects.create(
         trough=t4,
@@ -90,5 +113,6 @@ def ensure_seed_data():
         actualMoisture=Decimal("34.80"),
         rollGrade="特级",
     )
+    # 装叶中 → 可下槽 不要求风道标定，仅校验最新批次含水率（34.80 ≤ 40）
     t4.status = Trough.STATUS_READY
     t4.save()

@@ -4,6 +4,11 @@
 <div class="page-header">
   <h1>茶园</h1>
   <div class="actions">
+    {% if valid_only %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'garden_list' %}">显示全部</a>
+    {% else %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'garden_list' %}?valid=1">仅看有效标定园</a>
+    {% endif %}
     <button class="btn btn-secondary btn-sm"
             hx-get="{% url 'garden_list' %}"
             hx-target="#garden-table"
@@ -11,6 +16,9 @@
     <a class="btn" href="{% url 'garden_create' %}">新建茶园</a>
   </div>
 </div>
+{% if valid_only %}
+<p class="muted">仅显示当前具有有效风道标定的茶园（与首页「有效标定茶园」计数一致）。</p>
+{% endif %}
 <div class="card" id="garden-table">
   {% include "gardens/_table.html" %}
 </div>

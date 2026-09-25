@@ -11,6 +11,7 @@
   <div class="stat"><div class="num">{{ loading_count }}</div><div class="label">装叶中</div></div>
   <div class="stat"><div class="num">{{ withering_count }}</div><div class="label">萎凋中</div></div>
   <div class="stat"><div class="num">{{ ready_count }}</div><div class="label">可下槽</div></div>
+  <div class="stat"><div class="num">{{ valid_garden_count }}</div><div class="label"><a href="{% url 'garden_list' %}?valid=1">有效标定茶园</a></div></div>
 </div>
-<p class="muted" style="margin-top:1.25rem">规则提示：槽位设为「可下槽」时，最新批次实测含水率须已填写且不超过 40%。</p>
+<p class="muted" style="margin-top:1.25rem">规则提示：槽位设为「可下槽」时，最新批次实测含水率须已填写且不超过 40%；槽位从「装叶中」改为「萎凋中」时，所属茶园须存在有效风道标定（最新通过票未作废且标定日不早于七个自然日前），否则拒绝改态。</p>
 {% endblock %}

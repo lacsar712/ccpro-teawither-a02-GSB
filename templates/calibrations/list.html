@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}风道标定{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>风道标定票</h1>
+  <div class="actions">
+    <button class="btn btn-secondary btn-sm"
+            hx-get="{% url 'calibration_list' %}"
+            hx-target="#calibration-table"
+            hx-swap="innerHTML">刷新列表</button>
+    <a class="btn" href="{% url 'calibration_create' %}">新建标定票</a>
+  </div>
+</div>
+<p class="muted">有效标定：通过、未作废且标定日不早于七个自然日前。茶园无有效标定时，其槽位不得从「装叶中」改为「萎凋中」。</p>
+<div class="card" id="calibration-table">
+  {% include "calibrations/_table.html" %}
+</div>
+{% endblock %}

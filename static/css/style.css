@@ -216,6 +216,16 @@ table.data tr:hover td {
   color: #004085;
 }
 
+.badge-danger {
+  background: #fdecea;
+  color: var(--danger);
+}
+
+.badge-voided {
+  background: #e2e3e5;
+  color: #5a5f64;
+}
+
 .form-grid {
   display: grid;
   gap: 0.85rem;
